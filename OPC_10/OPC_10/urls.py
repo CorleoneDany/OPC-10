@@ -13,10 +13,22 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django import views
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework import routers
+from SoftDesk.views import ContributorViewSet, IssueViewSet, ProjectViewSet, UserViewSet, CommentViewSet
+
+router = routers.SimpleRouter()
+router.register('user/', UserViewSet)
+router.register('projects/', ProjectViewSet)
+router.register('projects/{id}/users/', ContributorViewSet)
+router.register('projects/{id}/issues/', IssueViewSet)
+router.register('projects/{id}/issues/{id}/comments/', CommentViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
 ]
+
+urlpatterns += router.urls

@@ -1,20 +1,35 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 
 # Create your models here.
 
 
-class User(AbstractBaseUser):
+class UserManager(BaseUserManager):
+    def create_user(self, email, password):
+        """Create a new user."""
+        user = User(email=email, password=password)
+        user.save()
+        return user
+
+    def create_superuser(self, email, password):
+        """Create a new superuser."""
+        user = User(email=email, password=password)
+        user.is_superuser = True
+        user.is_staff = True
+        user.save()
+        return user
+
+
+class User(AbstractUser):
     """Remodel the users."""
 
-    first_name = models.CharField(max_length=64)
-    last_name = models.CharField(max_length=64)
-    email = models.EmailField(max_length=64, unique=True)
-    password = models.CharField(max_length=64)
     username = None
+    email = models.EmailField(max_length=64, unique=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
+
+    objects = UserManager()
 
 
 class Contributor(models.Model):
@@ -61,7 +76,7 @@ class Issue(models.Model):
     author_user_id = models.ForeignKey(
         to=User, on_delete=models.CASCADE,
         related_name="issue_author")
-    assignee_user_ud = models.ForeignKey(
+    assignee_user_id = models.ForeignKey(
         to=User, on_delete=models.CASCADE,
         related_name="issue_assignee")
     created_time = models.DateTimeField(auto_now_add=True)
