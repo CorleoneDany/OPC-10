@@ -20,11 +20,12 @@ from rest_framework import routers
 from SoftDesk.views import ContributorViewSet, IssueViewSet, ProjectViewSet, UserViewSet, CommentViewSet
 
 router = routers.SimpleRouter()
-router.register('user/', UserViewSet)
-router.register('projects/', ProjectViewSet)
-router.register('projects/{id}/users/', ContributorViewSet)
-router.register('projects/{id}/issues/', IssueViewSet)
-router.register('projects/{id}/issues/{id}/comments/', CommentViewSet)
+router.register('user', UserViewSet)
+router.register('projects', ProjectViewSet)
+router.register('projects/{project_id}/users', ContributorViewSet)
+router.register('projects/{project_id}/issues', IssueViewSet)
+router.register(
+    'projects/{project_id}/issues/{issue_id}/comments', CommentViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
