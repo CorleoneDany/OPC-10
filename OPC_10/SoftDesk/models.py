@@ -42,21 +42,33 @@ class Contributor(models.Model):
         ('D', 'Delete')
     )
 
+    ROLE = (
+        ('AUTHOR', 'Author'),
+        ('CONTRIBUTOR', 'Contributor')
+    )
+
     user_id = models.ForeignKey(
         to=User, on_delete=models.CASCADE,
         related_name="contributor_user")
     project_id = models.IntegerField()
     permission = models.CharField(
         max_length=64, choices=PERM_CHOICES, default='R')
-    role = models.CharField(max_length=64)
+    role = models.CharField(max_length=64, choices=ROLE)
 
 
 class Project(models.Model):
     """Model the projects."""
 
+    PROJECT_TYPE_CHOICES = (
+        ('BE', 'back-end'),
+        ('FE', 'front-end'),
+        ('IOS', 'IOS'),
+        ('ANDROID', 'Android')
+    )
+
     title = models.CharField(max_length=64)
     description = models.CharField(max_length=64)
-    type = models.CharField(max_length=64)
+    type = models.CharField(max_length=64, choices=PROJECT_TYPE_CHOICES)
     author_user_id = models.ForeignKey(
         to=User, on_delete=models.CASCADE,
         related_name="project_author")
@@ -65,14 +77,32 @@ class Project(models.Model):
 class Issue(models.Model):
     """Model the issues."""
 
+    PRIORITY_CHOICES = (
+        ('L', 'Low'),
+        ('M', 'Medium'),
+        ('H', 'High')
+    )
+
+    STATUS_CHOICES = (
+        ('TO-DO', 'To Do'),
+        ('IN-PROGRESS', 'In Progress'),
+        ('DONE', 'Done')
+    )
+
+    TAGS = (
+        ('BUG', 'Bug'),
+        ('IMPROVEMENT', 'Improvement'),
+        ('TASK', 'Task')
+    )
+
     title = models.CharField(max_length=64)
     desc = models.CharField(max_length=64)
-    tag = models.CharField(max_length=64)
-    priority = models.CharField(max_length=64)
+    tag = models.CharField(max_length=64, choices=TAGS)
+    priority = models.CharField(max_length=64, choices=PRIORITY_CHOICES)
     project_id = models.ForeignKey(
         to=Project, on_delete=models.CASCADE,
         related_name="issue_project")
-    status = models.CharField(max_length=64)
+    status = models.CharField(max_length=64, choices=STATUS_CHOICES)
     author_user_id = models.ForeignKey(
         to=User, on_delete=models.CASCADE,
         related_name="issue_author")
