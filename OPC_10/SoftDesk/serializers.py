@@ -1,8 +1,13 @@
 from rest_framework.serializers import ModelSerializer
 from .models import User, Contributor, Project, Issue, Comment
+from django.contrib.auth.hashers import make_password
 
 
 class UserSerializer(ModelSerializer):
+
+    def validate_password(self, value: str) -> str:
+        return make_password(value)
+
     class Meta:
 
         model = User
@@ -19,6 +24,7 @@ class ContributorSerializer(ModelSerializer):
 
 
 class ProjectSerializer(ModelSerializer):
+
     class Meta:
 
         model = Project
