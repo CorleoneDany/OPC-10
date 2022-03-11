@@ -1,4 +1,4 @@
-from multiprocessing import context
+from cgitb import lookup
 from rest_framework.response import Response
 from rest_framework import viewsets
 from .models import User, Contributor, Project, Issue, Comment
@@ -39,25 +39,27 @@ class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
     queryset = Project.objects.all()
     permission_classes = [IsAuthenticated]
+    lookup_field = 'id'
 
-    def retrieve(self, request, pk=None):
-        project = Project.objects.get(id=pk)
+    def retrieve(self, request, project_id=None):
+        project = Project.objects.get(id=project_id)
         project_serializer = ProjectSerializer(project)
         return Response(project_serializer.data)
 
     def create(self, request):
-        project = Project.objects.create(
-            **request.data, author_user_id=request.user)
-        if project.is_valid():
-            project.save()
-            contributor = Contributor.objects.create(project_id=project,
-                                                     user_id=request.user.id,
+        serializer = ProjectSerializer(data=request.data)
+        if serializer.is_valid():
+            project = serializer.save(author=request.user)
+            contributor = Contributor.objects.create(project=project,
+                                                     user=request.user,
                                                      role='Author')
             contributor.save()
-        return Response(project.data)
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
 
-    def destroy(self, request, pk):
-        project = Project.objects.get(id=pk)
+    def destroy(self, request, project_id):
+        project = Project.objects.get(id=project_id)
         project.delete()
         return Response(status=204)
 
@@ -75,20 +77,21 @@ class ContributorViewSet(viewsets.ModelViewSet):
     serializer_class = ContributorSerializer
     queryset = Contributor.objects.all()
     permission_classes = [IsAuthenticated]
+    lookup_field = 'id'
 
-    def retrieve(request, project_id):
+    def list(self, request, project_id):
         contributors = Contributor.objects.filter(project_id=project_id)
         contributors_serializer = ContributorSerializer(
             contributors, many=True)
         return Response(contributors_serializer.data)
 
-    def create(request):
+    def create(self, request, project_id):
         contributor = ContributorSerializer(data=request.data)
         if contributor.is_valid():
             contributor.save()
         return Response(contributor.data)
 
-    def update(request, contributor_id):
+    def update(self, request, contributor_id):
         contributor = Contributor.objects.get(id=contributor_id)
         contributor_serializer = ContributorSerializer(
             contributor, data=request.data)
@@ -96,7 +99,7 @@ class ContributorViewSet(viewsets.ModelViewSet):
             contributor_serializer.save()
         return Response(contributor_serializer.data)
 
-    def destroy(request, contributor_id):
+    def destroy(self, request, contributor_id):
         contributor = Contributor.objects.get(id=contributor_id)
         contributor.delete()
         return Response(status=204)
