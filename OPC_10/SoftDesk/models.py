@@ -1,23 +1,9 @@
+# sourcery skip: avoid-builtin-shadow
 from django.db import models
-from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth.models import AbstractUser
+from .manager import UserManager
 
 # Create your models here.
-
-
-class UserManager(BaseUserManager):
-    def create_user(self, email, password):
-        """Create a new user."""
-        user = User(email=email, password=password)
-        user.save()
-        return user
-
-    def create_superuser(self, email, password):
-        """Create a new superuser."""
-        user = User(email=email, password=password)
-        user.is_superuser = True
-        user.is_staff = True
-        user.save()
-        return user
 
 
 class User(AbstractUser):
@@ -27,7 +13,7 @@ class User(AbstractUser):
     email = models.EmailField(max_length=64, unique=True)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['first_name', 'last_name']
 
     objects = UserManager()
 
@@ -53,13 +39,6 @@ class Project(models.Model):
 class Contributor(models.Model):
     """Model the contributors."""
 
-    PERM_CHOICES = (
-        ('C', 'Create'),
-        ('R', 'Read'),
-        ('U', 'Update'),
-        ('D', 'Delete')
-    )
-
     ROLE = (
         ('AUTHOR', 'Author'),
         ('CONTRIBUTOR', 'Contributor')
@@ -70,8 +49,7 @@ class Contributor(models.Model):
         related_name="contributor_user")
     project = models.ForeignKey(
         to=Project, on_delete=models.CASCADE, related_name="contributor_project")
-    permission = models.CharField(
-        max_length=64, choices=PERM_CHOICES, default='R')
+    permission = models.CharField(max_length=64)
     role = models.CharField(max_length=64, choices=ROLE)
 
 

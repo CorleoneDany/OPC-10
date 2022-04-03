@@ -12,7 +12,7 @@ class UserSerializer(ModelSerializer):
 
         model = User
         fields = '__all__'
-        read_field_only = ['id']
+        read_only_fields = ['id']
 
 
 class ContributorSerializer(ModelSerializer):
@@ -20,7 +20,7 @@ class ContributorSerializer(ModelSerializer):
 
         model = Contributor
         fields = '__all__'
-        read_field_only = ['id', 'project']
+        read_only_fields = ['id', 'project']
 
 
 class ProjectSerializer(ModelSerializer):
@@ -29,7 +29,7 @@ class ProjectSerializer(ModelSerializer):
 
         model = Project
         fields = '__all__'
-        read_field_only = ['id', 'author']
+        read_only_fields = ['id', 'author']
 
 
 class IssueSerializer(ModelSerializer):
@@ -37,7 +37,7 @@ class IssueSerializer(ModelSerializer):
 
         model = Issue
         fields = '__all__'
-        read_field_only = ['id', 'project', 'author', 'created_time']
+        read_only_fields = ['id', 'project', 'author', 'created_time']
 
 
 class CommentSerializer(ModelSerializer):
@@ -45,4 +45,4 @@ class CommentSerializer(ModelSerializer):
 
         model = Comment
         fields = '__all__'
-        read_field_only = ['id', 'author', 'issue', 'created_time']
+        read_only_fields = ['id', 'author', 'issue', 'created_time']
