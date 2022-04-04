@@ -18,9 +18,9 @@
 
 ## Technologies utilisées
 
-Django-Rest-Framework
-Simple-JWT
-Routers > Nested-Router
-Viewsets
-Serializers
-Permissions
++ Django-Rest-Framework
++ Simple-JWT
++ Routers > Nested-Router
++ Viewsets
++ Serializers
++ Permissions
