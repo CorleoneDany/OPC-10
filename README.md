@@ -15,3 +15,12 @@
  Installer l'environnement virtuel ainsi que ses dépendances via le fichier v-env.sh puis lancer le code via la commande python manage.py runserver.
  
  Il est à noter que la base de données n'est pas fournie dans le git. Il faudra donc peupler la base afin d'avoir une démo utilisable.
+
+## Technologies utilisées
+
+Django-Rest-Framework
+Simple-JWT
+Routers > Nested-Router
+Viewsets
+Serializers
+Permissions
