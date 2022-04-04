@@ -26,7 +26,6 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     permission_classes = [AllowAny]
 
-
 ###############################################################################
 ###############################################################################
 ###############################################################################
@@ -68,6 +67,15 @@ class ContributorViewSet(viewsets.ModelViewSet):
     serializer_class = ContributorSerializer
     queryset = Contributor.objects.all()
     permission_classes = [IsAuthenticated, HasContributorPermission]
+
+    def create(self, request, project_pk):
+        serializer = ContributorSerializer(data=request.data)
+        if serializer.is_valid():
+            project = Project.objects.get(pk=project_pk)
+            contributor = serializer.save(project=project,
+                                          user=request.user)
+            contributor.save()
+            return Response(serializer.data)
 
 ###############################################################################
 ###############################################################################

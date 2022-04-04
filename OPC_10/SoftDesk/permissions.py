@@ -50,8 +50,12 @@ class HasIssuePermission(BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method in owner_methods:
             return request.user == obj.author
-        if obj.author == request.user:
-            return True
+        elif request.method in SAFE_METHODS:
+            return bool(
+                Contributor.objects.filter(user=request.user)
+                .filter(project=view.kwargs['project_pk'])
+                .exists()
+            )
 
 
 class HasCommentPermission(BasePermission):
@@ -65,3 +69,9 @@ class HasCommentPermission(BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method in owner_methods:
             return request.user == obj.author
+        elif request.method in SAFE_METHODS:
+            return bool(
+                Contributor.objects.filter(user=request.user)
+                .filter(project=view.kwargs['project_pk'])
+                .exists()
+            )
